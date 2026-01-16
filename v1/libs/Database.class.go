@@ -1,10 +1,11 @@
+// Database.class.go
 package libs
 
 import (
 	"context"
 	"e-commerce/v1/libs/envread"
 	"time"
-
+	"fmt"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -39,10 +40,9 @@ func GetColl()*mongo.Collection{
 
 }	
 
+func GetRefreshColl()*mongo.Collection{
+	envread.Getenv()
+	fmt.Println(envread.Env_file_read.DataBase,envread.Env_file_read.Collection_r)
+	return  Client.Database(envread.Env_file_read.DataBase).Collection(envread.Env_file_read.Collection_r)
 
-/*
-
-Curd - opration for GO function exploar
-
-
-*/
+}

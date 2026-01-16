@@ -2,8 +2,10 @@ package main
 
 import (
 	"e-commerce/v1/libs"
+	"e-commerce/v1/libs/authentication"
 	"e-commerce/v1/libs/Middleware"
 	"net/http"
+	"fmt"
 
 	"github.com/gin-gonic/gin"
 )
@@ -30,18 +32,21 @@ func main(){
 	// if err!= nil{
 	// 	fmt.Println("somethink is Wrong")
 	// }
-
+	libs.ConnectMongo()
+	
 	route := gin.Default()
 	route.GET("/",func(ctx *gin.Context) {
 		ctx.JSON(http.StatusOK,gin.H{
 			"HomePage" : "hi every one",
 		})
 	})
-	route.GET("/login",libs.Login)
+	route.GET("/login",authentication.Login)
+	route.GET("/signup",authentication.Signup)
 	
-
+	fmt.Println("service start port with :8080")
 	protected := route.Group("api/")
 	protected.Use(Middleware.JwtMiddleware())
+	protected.GET("/refresh",authentication.Refresh)
 	protected.GET("/product",func(c *gin.Context) {
 		c.JSON(http.StatusOK,gin.H{
 			"message":"welcome to the Product Daseboard Page",

@@ -9,8 +9,10 @@ import (
 type venv struct{
 	MongoDB string `json:"MONGO_DB"`
 	Collection string `json:"COLL_DB"`
+	Collection_r string `json:"COLLR_DB"`
 	DataBase string `json:"DB"`
 	JwtKey string `json:"SEC_KEY"`
+	JwtRKey string `json:"SEC_KEY_R`
 }
 
 
