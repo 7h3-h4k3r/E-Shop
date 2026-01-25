@@ -157,9 +157,9 @@ func GetRDetails(r_token *RefreshToken , token_id string) error{
 	refresh_token_hashed := hashToken(token_id)
  
 	filter := bson.M{
-		// "expire_at": bson.M{
-		// 	"$gt": time.Now(),
-		// },
+		"expire_at": bson.M{
+			"$gt": time.Now(),
+		},
 		"hashed_token": refresh_token_hashed,
 		"revoke":    false,
 		

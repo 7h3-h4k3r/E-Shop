@@ -29,10 +29,7 @@ func JwtMiddleware() gin.HandlerFunc{
 			return
 		}
 
-		c.JSON(http.StatusAccepted,gin.H{
-			"state" : "authGranted",
-			"bool" : true,
-		})
+	
 
 		c.Next()
 	}

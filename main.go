@@ -3,7 +3,9 @@ package main
 import (
 	"e-commerce/v1/libs"
 	"e-commerce/v1/libs/authentication"
+	"e-commerce/v1/libs/adminauth"
 	"e-commerce/v1/libs/Middleware"
+	"e-commerce/v1/libs/product"
 	"net/http"
 	"fmt"
 
@@ -12,26 +14,6 @@ import (
 
 func main(){
 
-	// token , _ := authentication.GenareateToken("dharain")
-	// fmt.Println(token)
-	// err := authentication.AuthGranted("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VybmFtZSI6ImRoYXJhaW4iLCJleHAiOjE3Njc5NTEyMjAsImlhdCI6MTc2Nz.13R-ngV1GMi7ogiVReJ3qQko_oHDXYYwy8N5JLsIDGw")
-
-	// if err := libs.ConnectMongo();err!=nil{
-	// 	fmt.Println("DataBase connection is Failed")
-	// }else{
-	// 	fmt.Println("its Connected succesfully");
-	// }
-
-	// collection := libs.GetColl()
-	// user := libs.User{
-	// 	Name: "dharani",
-
-	// }
-	 
-	// _ , err := collection.InsertOne(context.TODO(),user)
-	// if err!= nil{
-	// 	fmt.Println("somethink is Wrong")
-	// }
 	libs.ConnectMongo()
 	
 	route := gin.Default()
@@ -40,18 +22,27 @@ func main(){
 			"HomePage" : "hi every one",
 		})
 	})
-	route.GET("/login",authentication.Login)
-	route.GET("/signup",authentication.Signup)
-	
+	route.POST("/login",authentication.Login)
+	route.POST("/signup",authentication.Signup)
+	route.POST("/admin",adminauth.AdminAuthenticate)
 	fmt.Println("service start port with :8080")
 	protected := route.Group("api/")
 	protected.Use(Middleware.JwtMiddleware())
 	protected.GET("/refresh",authentication.Refresh)
-	protected.GET("/product",func(c *gin.Context) {
-		c.JSON(http.StatusOK,gin.H{
-			"message":"welcome to the Product Daseboard Page",
-		})
-	})
+
+	// protected.GET("/product/:puid",product.GetProductData)
+	protected.POST("/setcart",product.AddCartItem)
+	protected.POST("/getcart",product.GetCartsItem)
+	protected.POST("/delcart/:pid",product.DelCartItem)
+	// protected.POST("/delcard/:pid",product.DelCardItem)
+	protected.POST("/products",product.Products)
+
+	admin_auth := route.Group("auth/")
+	admin_auth.Use(Middleware.JwtMiddleware())
+	admin_auth.POST("/additem",product.InsertItem)
+	admin_auth.DELETE("/del/:id",product.DelItem)
+	admin_auth.POST("/upqdata",product.UpdatePQ)
+	admin_auth.POST("/Dashboard",product.Products)
 	route.Run(":8080")
 	
 }
